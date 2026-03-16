@@ -3,7 +3,7 @@ Overview
 Brewery API is an ASP.NET Core Web API for querying open breweries.
 Project Structure
 ```text
-BreweryApi.sln
+BreweryApi.slnx
 │
 ├── BreweryApi/                  ASP.NET Core Web API project
 ├── BreweryApi.Application/      Application layer
