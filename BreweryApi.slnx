@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="BreweryApi.Application/BreweryApi.Application.csproj" />
+  <Project Path="BreweryApi.Domain/BreweryApi.Domain.csproj" />
+  <Project Path="BreweryApi.Infrastructure/BreweryApi.Infrastructure.csproj" />
+  <Project Path="BreweryApi.IntegrationTests/BreweryApi.IntegrationTests.csproj" />
+  <Project Path="BreweryApi.UnitTests/BreweryApi.UnitTests.csproj" />
+  <Project Path="BreweryApi/BreweryApi.csproj" />
+  <Project Path="GenerateToken/GenerateToken.csproj" Id="eb7b8d33-5d05-4432-a0a8-a5e8e01053a8" />
+</Solution>
