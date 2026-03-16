@@ -82,7 +82,9 @@ public sealed class BreweryService : IBreweryService
 
     public async Task<IReadOnlyList<AutocompleteItemDto>> AutocompleteAsync(string term, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(term))
+        term = term?.Trim() ?? string.Empty;
+
+        if (term.Length < 3)
         {
             return Array.Empty<AutocompleteItemDto>();
         }
@@ -155,6 +157,11 @@ public sealed class BreweryService : IBreweryService
             (!query.Latitude.HasValue || !query.Longitude.HasValue))
         {
             throw new ArgumentException("Latitude and longitude are required when sorting by distance.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.SearchQuery) && query.SearchQuery.Trim().Length < 3)
+        {
+            throw new ArgumentException("searchQuery must be at least 3 characters.");
         }
 
         var providedSearchValues = new[]
