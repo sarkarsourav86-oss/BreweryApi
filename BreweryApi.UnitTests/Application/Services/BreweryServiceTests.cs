@@ -432,6 +432,29 @@ public sealed class BreweryServiceTests
     }
 
     [Theory]
+    [InlineData("a")]
+    [InlineData("ab")]
+    [InlineData("  a  ")]
+    [InlineData("  ab  ")]
+    public async Task SearchAsync_SearchQueryShorterThanThreeCharacters_ThrowsArgumentException(string searchQuery)
+    {
+        // Arrange
+        var query = new BreweryQuery
+        {
+            SearchQuery = searchQuery,
+            Page = 1,
+            PageSize = 25
+        };
+
+        // Act
+        var act = () => _sut.SearchAsync(query, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("searchQuery must be at least 3 characters.");
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(-1)]
     public async Task SearchAsync_InvalidPage_ThrowsArgumentOutOfRangeException(int page)
@@ -480,6 +503,33 @@ public sealed class BreweryServiceTests
 
         // Assert
         result.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("a")]
+    [InlineData("ab")]
+    [InlineData("  a  ")]
+    [InlineData("  ab  ")]
+    public async Task AutocompleteAsync_TermShorterThanThreeCharacters_ReturnsEmptyList(string term)
+    {
+        // Act
+        var result = await _sut.AutocompleteAsync(term, CancellationToken.None);
+
+        // Assert
+        result.Should().BeEmpty();
+
+        _providerClientMock.Verify(
+            x => x.SearchAsync(
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                It.IsAny<int>(),
+                It.IsAny<int>(),
+                It.IsAny<double?>(),
+                It.IsAny<double?>(),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 
     [Fact]

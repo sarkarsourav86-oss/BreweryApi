@@ -253,4 +253,27 @@ public sealed class BreweriesControllerIntegrationTests
         body.Should().Contain("One or more validation errors occurred.");
         body.Should().Contain("term");
     }
+
+    [Fact]
+    public async Task GetBreweries_SearchQueryShorterThanThreeCharacters_ReturnsBadRequest()
+    {
+        // Arrange
+        var breweryServiceMock = new Mock<IBreweryService>();
+
+        breweryServiceMock
+            .Setup(x => x.SearchAsync(It.IsAny<BreweryQuery>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new ArgumentException("searchQuery must be at least 3 characters."));
+
+        await using var factory = new AuthenticatedTestWebApplicationFactory(breweryServiceMock.Object);
+        using var client = factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync("/api/v1/breweries?searchQuery=ab");
+
+        // Assert
+        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+
+        var body = await response.Content.ReadAsStringAsync();
+        body.Should().Contain("searchQuery must be at least 3 characters.");
+    }
 }
