@@ -153,3 +153,5 @@ Generate or provide a valid JWT
 Click Authorize in Swagger
 Paste the bearer token
 Execute the request
+## Notes
+For this project, the JWT secret is stored in configuration for simplicity. In a production environment, secrets should be stored in environment variables or a managed secret store.
