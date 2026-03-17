@@ -74,20 +74,7 @@ Build the solution:
 ```bash
 dotnet build
 ```
-Token Generation:
-A helper is included to generate a local JWT for testing protected endpoints.
-Token settings
-The token must use the same values configured in appsettings.json under Jwt:
-Issuer
-Audience
-SecretKey
-TokenExpirationMinutes
-The generated token should include the claim:
-scope = brewery.read
-Generate a token
-Use the helper in JwtTokenGenerator.cs with values that match your Jwt configuration.
-
-Run the API project:
+## Run the API project:
 ```bash
 dotnet run --project BreweryApi
 ```
@@ -105,7 +92,52 @@ Run only integration tests:
 ```bash
 dotnet test BreweryApi.IntegrationTests
 ```
-API Endpoints
+## Design Decisions
+
+### Layered structure
+
+The solution is split into **API**, **Application**, **Domain**, and **Infrastructure** projects to keep responsibilities separated and make the code easier to test and maintain.
+
+### External API wrapper
+
+The API does not expose Open Brewery DB directly. Instead, it adds:
+
+- filtering to open breweries only
+- validation
+- search and sort rules
+- caching
+- authentication
+- a simplified response contract
+
+### In-memory caching
+
+The exercise requested in-memory storage, so `IMemoryCache` is used with a **10-minute cache duration**.
+
+### Authentication
+
+JWT bearer authentication is used to secure the endpoints. Authorization uses a policy requiring the `brewery.read` scope.
+
+### Error handling
+
+A global exception middleware catches unhandled exceptions and converts them into consistent HTTP error responses.
+
+### Autocomplete
+
+Autocomplete is implemented as a separate endpoint that returns lightweight brewery suggestions for a partial search term.
+
+## Token Generation:
+A helper is included to generate a local JWT for testing protected endpoints.
+Token settings
+The token must use the same values configured in appsettings.json under Jwt:
+Issuer
+Audience
+SecretKey
+TokenExpirationMinutes
+The generated token should include the claim:
+scope = brewery.read
+Generate a token
+Use the helper in JwtTokenGenerator.cs with values that match your Jwt configuration.
+## API Endpoints
 Breweries
 ```http
 GET /api/v1/breweries
@@ -114,7 +146,7 @@ Autocomplete
 ```http
 GET /api/v1/breweries/autocomplete?term=lag
 ```
-Authentication
+## Authentication
 The API uses JWT bearer authentication.
 To call protected endpoints from Swagger:
 Generate or provide a valid JWT
