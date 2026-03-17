@@ -129,10 +129,11 @@ Autocomplete is implemented as a separate endpoint that returns lightweight brew
 A helper is included to generate a local JWT for testing protected endpoints.
 Token settings
 The token must use the same values configured in appsettings.json under Jwt:
-Issuer
-Audience
-SecretKey
-TokenExpirationMinutes
+- Issuer
+- Audience
+- SecretKey
+- TokenExpirationMinutes
+  
 The generated token should include the claim:
 scope = brewery.read
 Generate a token
