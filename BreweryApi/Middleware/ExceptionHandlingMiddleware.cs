@@ -36,11 +36,20 @@ public sealed class ExceptionHandlingMiddleware
     {
         var (statusCode, title) = GetStatusCodeAndTitle(exception);
 
-        logger.LogError(
-            exception,
-            "Unhandled exception occurred. StatusCode: {StatusCode}, Path: {Path}",
-            statusCode,
-            context.Request.Path);
+        if (exception is OperationCanceledException)
+        {
+            logger.LogWarning(
+                "Request was cancelled. Path: {Path}",
+                context.Request.Path);
+        }
+        else
+        {
+            logger.LogError(
+                exception,
+                "Unhandled exception occurred. StatusCode: {StatusCode}, Path: {Path}",
+                statusCode,
+                context.Request.Path);
+        }
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;
@@ -65,6 +74,7 @@ public sealed class ExceptionHandlingMiddleware
             ArgumentOutOfRangeException => ((int)HttpStatusCode.BadRequest, "Bad Request"),
             ArgumentException => ((int)HttpStatusCode.BadRequest, "Bad Request"),
             HttpRequestException => ((int)HttpStatusCode.BadGateway, "Bad Gateway"),
+            OperationCanceledException => (499, "Client Closed Request"),
             _ => ((int)HttpStatusCode.InternalServerError, "Internal Server Error")
         };
     }
