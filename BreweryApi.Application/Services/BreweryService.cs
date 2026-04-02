@@ -67,9 +67,14 @@ public sealed class BreweryService : IBreweryService
 
         var sortedItems = ApplySorting(mappedItems, query);
 
+        var paginatedItems = sortedItems
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .ToList();
+
         var result = new PagedResult<BreweryDto>
         {
-            Items = sortedItems,
+            Items = paginatedItems,
             Page = query.Page,
             PageSize = query.PageSize,
             TotalCount = sortedItems.Count

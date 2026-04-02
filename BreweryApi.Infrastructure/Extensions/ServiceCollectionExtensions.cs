@@ -31,7 +31,8 @@ public static class ServiceCollectionExtensions
 
             client.BaseAddress = new Uri(options.BaseUrl);
             client.Timeout = TimeSpan.FromSeconds(15);
-        });
+        })
+        .AddStandardResilienceHandler();
 
         return services;
     }
